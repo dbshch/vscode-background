@@ -157,6 +157,47 @@ class Background {
         return false;
     }
 
+    private getFolderImgList(pathUrl: string): string[] {
+        if (!pathUrl || pathUrl === '') {
+            return [];
+        }
+        // 获取目录下的所有图片
+        const files: string[] = fs.readdirSync(path.resolve(pathUrl)).filter((s) => {
+            return s.endsWith('.png') || s.endsWith('.jpg') || s.endsWith('.jpeg') ||
+                s.endsWith('.gif') || s.endsWith('.webp') || s.endsWith('.bmp');
+        }).map((s)=>{
+            return path.join(this.config.imageFolder, s);
+        });
+
+        return files;
+    }
+
+    public updateBackground(): void {
+        const config = this.config;
+        if (!config.enabled) {
+            return;
+        }
+
+        let arr = defBase64; // 默认图片
+        if (!config.useDefault) {
+            // 自定义图片
+            if (!config.imageFolder) {
+                arr = config.customImages;
+            }
+            else {
+                arr = this.getFolderImgList(this.config.imageFolder);
+            }
+        }
+
+        const content = getCss(arr, config.style, config.styles, config.useFront, config.loop, config.shuffle).replace(/\s*$/, '').replace(/\\/g, "/"); // 去除末尾空白
+
+        let cssContent = this.getCssContent();
+        cssContent = this.clearCssContent(cssContent);
+        cssContent += content;
+
+        this.saveCssContent(cssContent);
+    }
+
     /**
      * 安装插件，hack css
      *
@@ -193,23 +234,9 @@ class Background {
             return;
         }
 
-        // 5.hack 样式
-        let arr = defBase64; // 默认图片
-
-        if (!config.useDefault) {
-            // 自定义图片
-            arr = config.customImages;
-        }
-
         // 自定义的样式内容
-        const content = getCss(arr, config.style, config.styles, config.useFront, config.loop).replace(/\s*$/, ''); // 去除末尾空白
+        this.updateBackground();
 
-        // 添加到原有样式(尝试删除旧样式)中
-        let cssContent = this.getCssContent();
-        cssContent = this.clearCssContent(cssContent);
-        cssContent += content;
-
-        this.saveCssContent(cssContent);
         vsHelp.showInfoRestart('Background has been changed! Please restart.');
     }
 

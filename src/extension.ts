@@ -22,6 +22,9 @@ export function activate(context: vscode.ExtensionContext): void {
     context.subscriptions.push(disposable);
 
     context.subscriptions.push(background.watch());
+
+    //Shuffle the image list for the next use if needed.
+    background.updateBackground();
 }
 
 // this method is called when your extension is deactivated

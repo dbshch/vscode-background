@@ -1,5 +1,28 @@
 import { version, BACKGROUND_VER } from './constants';
 
+function randomInt(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+  
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+  
+    return array;
+}
+
 /**
  * 通过配置获取样式文本
  *
@@ -39,10 +62,18 @@ export default function (
     style: any = {},
     styles: Array<any> = [],
     useFront = true,
-    loop = false
+    loop = false,
+    random = false
 ): string {
     // ------ 默认样式 ------
     const defStyle = getStyleByOptions(style, useFront);
+    
+    if (random) {
+        var x = [];
+        var i = 1;
+        while(x.push(i++) < images.length){};
+        shuffle(x);
+    }
 
     // ------ 在前景图时使用 ::after ------
     const frontContent = useFront ? '::after' : '::before';
@@ -53,6 +84,9 @@ export default function (
             // ------ nth-child ------
             // nth-child(1)
             let nthChildIndex = index + 1 + '';
+            if (random) {
+                nthChildIndex = x[index] + '';
+            }
             // nth-child(3n + 1)
             if (loop) {
                 nthChildIndex = `${images.length}n + ${nthChildIndex}`;

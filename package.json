@@ -80,6 +80,16 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Loop your images. 循环使用图片"
+                },
+                "background.imageFolder": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Images from folder. 使用图片文件夹"
+                },
+                "background.shuffle": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Shuffle the image list. 乱序图片"
                 }
             }
         }
